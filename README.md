@@ -115,16 +115,28 @@ SIMD vs the standard library over a 4 KiB ASCII buffer (`-count=3`, medians):
 | arm64 | Apple Silicon (native) | `EqualFold` | ~5.5 GB/s | ~2.80 GB/s | **~2.0×** |
 | amd64 | x86_64 QEMU VM (ratio valid, absolute MB/s low) | `ToUpper`   | — | — | **~4.0×** |
 | amd64 | x86_64 QEMU VM (ratio valid, absolute MB/s low) | `EqualFold` | — | — | **~2.7×** |
+| ppc64le | POWER10 (native, GCC Compile Farm) | `ToUpper` | ~1014 MB/s | ~245 MB/s | **~4.1×** |
 
 The amd64 figures come from a QEMU/TCG VM, so the absolute throughput is
 artificially low (no native silicon was available); only the SIMD-vs-stdlib ratio
 is meaningful there. The AVX2 (32-byte) kernel is selected at runtime when the
-CPU supports it.
+CPU supports it. The ppc64le row is measured natively on real POWER10 silicon
+(GCC Compile Farm, https://portal.cfarm.net/, VSX, Go 1.26.4, June 2026).
 
-> **ppc64le / s390x: qemu-validated; native perf pending.** Correctness is
-> proven under QEMU (full test suite + fuzz seed corpus at 100 % coverage), but
-> there is no GitHub-hosted POWER or IBM Z runner and QEMU's TCG is not
-> cycle-accurate, so no throughput number is quoted for these targets.
+> **ppc64le: validated on real POWER10** (GCC Compile Farm, VSX, Go 1.26.4,
+> June 2026) — `ToUpper` runs the real VSX case-fold kernel at ~4.1× stdlib
+> (above). **s390x: qemu-validated for correctness only; native throughput
+> pending** (no GitHub-hosted IBM Z runner, and QEMU's TCG is not
+> cycle-accurate, so no s390x throughput number is quoted).
+
+### Seventh architecture: ppc64 (big-endian)
+
+Beyond the six SIMD targets, the portable scalar fold is now build- and
+test-validated on **ppc64 (big-endian)** on real POWER9 silicon (GCC Compile
+Farm) — a big-endian target distinct from s390x's vector kernel, proving the
+generic fallback path bit-exact on big-endian. ppc64 BE carries no VSX build tag,
+so it takes the generic path, not a SIMD kernel. Framing: **six SIMD targets,
+validated on seven architectures.**
 
 ## Regenerating
 
