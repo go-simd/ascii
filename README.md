@@ -116,17 +116,24 @@ SIMD vs the standard library over a 4 KiB ASCII buffer (`-count=3`, medians):
 | amd64 | x86_64 QEMU VM (ratio valid, absolute MB/s low) | `ToUpper`   | — | — | **~4.0×** |
 | amd64 | x86_64 QEMU VM (ratio valid, absolute MB/s low) | `EqualFold` | — | — | **~2.7×** |
 | ppc64le | POWER10 (native, GCC Compile Farm) | `ToUpper` | ~1014 MB/s | ~245 MB/s | **~4.1×** |
+| riscv64 | SpacemiT X60, RVV 1.0 (native, GCC Compile Farm) | `ToUpper` | ~189 MB/s | ~86 MB/s | **~2.2×** |
 
 The amd64 figures come from a QEMU/TCG VM, so the absolute throughput is
 artificially low (no native silicon was available); only the SIMD-vs-stdlib ratio
 is meaningful there. The AVX2 (32-byte) kernel is selected at runtime when the
 CPU supports it. The ppc64le row is measured natively on real POWER10 silicon
-(GCC Compile Farm, https://portal.cfarm.net/, VSX, Go 1.26.4, June 2026).
+(GCC Compile Farm, https://portal.cfarm.net/, VSX, Go 1.26.4, June 2026). The
+riscv64 row is measured natively on a real SpacemiT X60 (RVV 1.0, GCC Compile
+Farm, Go 1.26.4, June 2026) — a low-power *in-order* RVV core, currently the only
+widely-available RVV silicon; the case-fold kernel is arithmetic-bound and wins
+~2.2×, and an out-of-order RVV part would likely do better.
 
 > **ppc64le: validated on real POWER10** (GCC Compile Farm, VSX, Go 1.26.4,
 > June 2026) — `ToUpper` runs the real VSX case-fold kernel at ~4.1× stdlib
-> (above). **s390x: qemu-validated for correctness only; native throughput
-> pending** (no GitHub-hosted IBM Z runner, and QEMU's TCG is not
+> (above). **riscv64: validated on a real SpacemiT X60** (RVV 1.0, GCC Compile
+> Farm, Go 1.26.4, June 2026) — `ToUpper` runs the real RVV case-fold kernel at
+> ~2.2× stdlib (above). **s390x: qemu-validated for correctness only; native
+> throughput pending** (no GitHub-hosted IBM Z runner, and QEMU's TCG is not
 > cycle-accurate, so no s390x throughput number is quoted).
 
 ### Seventh architecture: ppc64 (big-endian)
