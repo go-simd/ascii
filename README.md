@@ -117,6 +117,9 @@ SIMD vs the standard library over a 4 KiB ASCII buffer (`-count=3`, medians):
 | amd64 | x86_64 QEMU VM (ratio valid, absolute MB/s low) | `EqualFold` | — | — | **~2.7×** |
 | ppc64le | POWER9 (native, GCC Compile Farm) | `ToUpper` | ~1014 MB/s | ~245 MB/s | **~4.1×** |
 | riscv64 | SpacemiT X60, RVV 1.0 (native, GCC Compile Farm) | `ToUpper` | ~189 MB/s | ~86 MB/s | **~2.2×** |
+| s390x | IBM z15, VXE2 (native, 2026-07-03, `-count=6`) | `ToUpper` | — | — | **~10×** |
+| s390x | IBM z15, VXE2 (native, 2026-07-03, `-count=6`) | `ToLower` | — | — | **~10×** |
+| s390x | IBM z15, VXE2 (native, 2026-07-03, `-count=6`) | `EqualFold` | — | — | **~1.6×** |
 
 The amd64 figures come from a QEMU/TCG VM, so the absolute throughput is
 artificially low (no native silicon was available); only the SIMD-vs-stdlib ratio
@@ -132,9 +135,9 @@ widely-available RVV silicon; the case-fold kernel is arithmetic-bound and wins
 > 2026-06-26) — `ToUpper` runs the real VSX case-fold kernel at ~4.1× stdlib
 > (above). **riscv64: validated on a real SpacemiT X60** (RVV 1.0, GCC Compile
 > Farm, Go 1.26.4, 2026-06-26) — `ToUpper` runs the real RVV case-fold kernel at
-> ~2.2× stdlib (above). **s390x: qemu-validated for correctness only; native
-> throughput pending** (no GitHub-hosted IBM Z runner, and QEMU's TCG is not
-> cycle-accurate, so no s390x throughput number is quoted).
+> ~2.2× stdlib (above). **s390x: measured on real IBM z15 (VXE2), native
+> execution, 2026-07-03, `-count=6`** — the vector-facility case-fold kernel
+> runs `ToUpper`/`ToLower` at ~10× stdlib and `EqualFold` at ~1.6× (above).
 
 ### Seventh architecture: ppc64 (big-endian)
 
