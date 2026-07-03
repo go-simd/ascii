@@ -132,9 +132,11 @@ widely-available RVV silicon; the case-fold kernel is arithmetic-bound and wins
 > 2026-06-26) — `ToUpper` runs the real VSX case-fold kernel at ~4.1× stdlib
 > (above). **riscv64: validated on a real SpacemiT X60** (RVV 1.0, GCC Compile
 > Farm, Go 1.26.4, 2026-06-26) — `ToUpper` runs the real RVV case-fold kernel at
-> ~2.2× stdlib (above). **s390x: qemu-validated for correctness only; native
-> throughput pending** (no GitHub-hosted IBM Z runner, and QEMU's TCG is not
-> cycle-accurate, so no s390x throughput number is quoted).
+> ~2.2× stdlib (above). **s390x: measured on real z15** (LPAR guest, VXE2, Ubuntu 6.8,
+> go1.26.4, 2026-07-03) — `ToUpper` at **3324 MB/s = 10.0× stdlib** and
+> `ToLower` at **3401 MB/s = ~10× stdlib**. `EqualFold` at 2279 vs stdlib
+> 1473 = 1.55×. The z15 wins are the biggest ASCII case-fold numbers in
+> the family, ahead of both POWER9 (4.1×) and RVV (2.2×).
 
 ### Seventh architecture: ppc64 (big-endian)
 
